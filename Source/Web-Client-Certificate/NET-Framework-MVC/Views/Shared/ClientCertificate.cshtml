@@ -1,0 +1,17 @@
+﻿@model HttpClientCertificate
+<h2>Client-certificate</h2>
+@if(Model != null)
+{
+	<ul>
+		<li>
+			<strong>Issuer: </strong>@Model.Issuer
+		</li>
+		<li>
+			<strong>Subject: </strong>@Model.Subject
+		</li>
+	</ul>
+}
+else
+{
+	<p>NULL</p>
+}

@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Constructing stylesheets and scripts in ASP.NET web-application</title>
+		<environment include="Development">
+			<link asp-append-version="true" href="~/Style/bootstrap.css" rel="stylesheet" />
+			<link asp-append-version="true" href="~/Style/Main.css" rel="stylesheet" />
+		</environment>
+		<environment exclude="Development">
+			<link asp-append-version="true" href="~/Style/Site.min.css" rel="stylesheet" />
+		</environment>
+	</head>
+	<body>
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+			<a class="navbar-brand" href="/">Home</a>
+			<button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-toggle="collapse" data-target="#navbar" type="button">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbar">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="/">Home again</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/">Home yet again</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<main role="main" class="container">
+			<h1>Constructing stylesheets and scripts in ASP.NET web-application</h1>
+			<p>Toggle the "ASPNETCORE_ENVIRONMENT" setting between "Development" and "Production" in LaunchSettings.json and see how the the source for this page changes regarding html/head/link and html/body/script.</p>
+		</main><!-- /.container -->
+		<environment include="Development">
+			<script asp-append-version="true" src="~/Scripts/jquery.js"></script>
+			<script asp-append-version="true" src="~/Scripts/popper.js"></script>
+			<script asp-append-version="true" src="~/Scripts/bootstrap.js"></script>
+			<script asp-append-version="true" src="~/Scripts/Main.js"></script>
+		</environment>
+		<environment exclude="Development">
+			<script asp-append-version="true" src="~/Scripts/Site.min.js"></script>
+		</environment>
+	</body>
+</html>

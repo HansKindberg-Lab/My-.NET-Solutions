@@ -1,0 +1,138 @@
+<Project>
+	<PropertyGroup>
+		<_ApplicationHostConfigurationFile>$(SolutionDir).vs\config\applicationhost.config</_ApplicationHostConfigurationFile>
+	</PropertyGroup>
+	<ItemDefinitionGroup>
+		<_ApplicationHostConfigurationTransformation>
+			<Value>Allow</Value>
+		</_ApplicationHostConfigurationTransformation>
+	</ItemDefinitionGroup>
+	<Target Name="WarnOnMissingApplicationHostConfigurationFileIfNecessary" AfterTargets="Build" Condition="!Exists('$(_ApplicationHostConfigurationFile)')">
+		<Message
+			Importance="high"
+			Text="¨%0a===========================================================================================================================================================%0a===========================================================================================================================================================%0a    The file '$(_ApplicationHostConfigurationFile)' does not exist.%0a    Hit run/F5 and Visual Studio will recreate it. Then rebuild the solution.%0a    The file is needed when building the project because it needs to be tranformed.%0a===========================================================================================================================================================%0a===========================================================================================================================================================%0a¨"
+		/>
+	</Target>
+	<Target Name="EnsureApplicationHostConfigurationSettings" AfterTargets="PrepareForRun" Condition="Exists('$(_ApplicationHostConfigurationFile)')">
+		<PropertyGroup>
+			<_SystemWebServerSecurityXPathPrefix>/configuration/configSections/sectionGroup[@name='system.webServer']/sectionGroup[@name='security']/</_SystemWebServerSecurityXPathPrefix>
+			<_AuthenticationXPathPrefix>$(_SystemWebServerSecurityXPathPrefix)sectionGroup[@name='authentication']/</_AuthenticationXPathPrefix>
+		</PropertyGroup>
+		<PropertyGroup>
+			<_XPath>$(_SystemWebServerSecurityXPathPrefix)section[@name='access']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="Access">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<PropertyGroup>
+			<_XPath>$(_AuthenticationXPathPrefix)section[@name='anonymousAuthentication']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="AnonymousAuthentication">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<PropertyGroup>
+			<_XPath>$(_AuthenticationXPathPrefix)section[@name='basicAuthentication']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="BasicAuthentication">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<PropertyGroup>
+			<_XPath>$(_AuthenticationXPathPrefix)section[@name='clientCertificateMappingAuthentication']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="ClientCertificateMappingAuthentication">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<PropertyGroup>
+			<_XPath>$(_AuthenticationXPathPrefix)section[@name='digestAuthentication']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="DigestAuthentication">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<PropertyGroup>
+			<_XPath>$(_AuthenticationXPathPrefix)section[@name='iisClientCertificateMappingAuthentication']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="IisClientCertificateMappingAuthentication">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<PropertyGroup>
+			<_XPath>$(_AuthenticationXPathPrefix)section[@name='windowsAuthentication']/@overrideModeDefault</_XPath>
+		</PropertyGroup>
+		<XmlPeek
+			Query="$(_XPath)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		>
+			<Output PropertyName="_OverrideModeDefault" TaskParameter="Result" />
+		</XmlPeek>
+		<ItemGroup>
+			<_ApplicationHostConfigurationTransformation Include="WindowsAuthentication">
+				<ActualValue>$(_OverrideModeDefault)</ActualValue>
+				<XPath>$(_XPath)</XPath>
+			</_ApplicationHostConfigurationTransformation>
+		</ItemGroup>
+		<Message
+			Condition="%(_ApplicationHostConfigurationTransformation.ActualValue) != %(_ApplicationHostConfigurationTransformation.Value)"
+			Importance="high"
+			Text="Transforming '$(_ApplicationHostConfigurationFile)': setting '%(_ApplicationHostConfigurationTransformation.XPath)' to '%(_ApplicationHostConfigurationTransformation.Value)'"
+		/>
+		<XmlPoke
+			Condition="%(_ApplicationHostConfigurationTransformation.ActualValue) != %(_ApplicationHostConfigurationTransformation.Value)"
+			Query="%(_ApplicationHostConfigurationTransformation.XPath)"
+			Value="%(_ApplicationHostConfigurationTransformation.Value)"
+			XmlInputPath="$(_ApplicationHostConfigurationFile)"
+		/>
+	</Target>
+</Project>

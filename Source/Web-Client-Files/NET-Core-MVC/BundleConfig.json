@@ -1,0 +1,23 @@
+﻿[
+	{
+		"inputFiles": [
+			"wwwroot/Style/bootstrap.css",
+			"wwwroot/Style/Main.css"
+		],
+		"outputFileName": "wwwroot/Style/Site.min.css"
+	},
+	{
+		"inputFiles": [
+			"wwwroot/Scripts/jquery.js",
+			"wwwroot/Scripts/popper.js",
+			"wwwroot/Scripts/bootstrap.js",
+			"wwwroot/Scripts/Main.js"
+		],
+		"minify": {
+			"enabled": true,
+			"renameLocals": true
+		},
+		"outputFileName": "wwwroot/Scripts/Site.min.js",
+		"sourceMap": false
+	}
+]

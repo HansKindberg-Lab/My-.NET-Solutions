@@ -1,0 +1,14 @@
+﻿@model ViewModel
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>IIS-hosted ASP.NET web-application asking for client-certificate</title>
+	</head>
+	<body>
+		<h1>IIS-hosted ASP.NET web-application asking for client-certificate</h1>
+		@Html.Partial("~/Views/Shared/Links.cshtml")
+		@Html.Partial("~/Views/Shared/ClientCertificate.cshtml", Model.ClientCertificate)
+	</body>
+</html>
