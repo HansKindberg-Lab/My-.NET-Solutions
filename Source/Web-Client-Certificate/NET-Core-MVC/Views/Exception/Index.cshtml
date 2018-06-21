@@ -8,26 +8,27 @@
 	</head>
 	<body>
 		<h1>Error</h1>
-		@if(Model != null)
+		@if (Model != null)
 		{
-			if(!string.IsNullOrWhiteSpace(Model.Heading))
+			if (!string.IsNullOrWhiteSpace(Model.Heading))
 			{
 				<h2>@Model.Heading</h2>
 			}
-			if(!string.IsNullOrWhiteSpace(Model.Description))
+			if (!string.IsNullOrWhiteSpace(Model.Description))
 			{
 				<p>@Model.Description</p>
 			}
-			if(!string.IsNullOrWhiteSpace(Model.DetailedDescription))
+			if (!string.IsNullOrWhiteSpace(Model.DetailedDescription))
 			{
 				<p>@Model.DetailedDescription</p>
 			}
-			if(Model.Exception != null)
+			if (Model.Exception != null)
 			{
 				<p>@Model.Exception.ToString()</p>
 			}
 		}
 		@Html.Partial("~/Views/Shared/Links.cshtml")
 		@Html.Partial("~/Views/Shared/ClientCertificate.cshtml", Model.ClientCertificate)
+		@Html.Partial("~/Views/Shared/Scripts.cshtml")
 	</body>
 </html>
