@@ -1,0 +1,28 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Web.config with location-elements</title>
+	</head>
+	<body>
+		<h1>Web.config with location-elements</h1>
+		<p>
+			<strong>Current path: </strong>@Context.Request.Path
+		</p>
+		<ul>
+			<li>
+				<a href="/">Home</a>
+			</li>
+			<li>
+				<a href="/Home/PathWithoutLocationElementInWebConfig/">Path without location-element in Web.config</a> - no problem
+			</li>
+			<li>
+				<a href="/Home/PathWithLocationElementWithoutAspNetCoreHandlerInWebConfig/">Path with location-element without asp-net-core-handler in Web.config</a> - 404.0
+			</li>
+			<li>
+				<a href="/Home/PathWithLocationElementWithAspNetCoreHandlerInWebConfig/">Path with location-element with asp-net-core-handler in Web.config</a> - no problem
+			</li>
+		</ul>
+	</body>
+</html>
