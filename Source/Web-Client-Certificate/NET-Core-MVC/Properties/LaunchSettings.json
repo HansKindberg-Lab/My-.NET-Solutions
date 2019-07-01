@@ -15,14 +15,6 @@
 			},
 			"launchBrowser": true,
 			"launchUrl": "http://localhost:8056/"
-		},
-		"Site": {
-			"applicationUrl": "http://localhost:8057/",
-			"commandName": "Project",
-			"environmentVariables": {
-				"ASPNETCORE_ENVIRONMENT": "Development"
-			},
-			"launchBrowser": true
 		}
 	}
 }

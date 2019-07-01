@@ -1,15 +1,77 @@
-﻿@model ViewModel
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>IIS-hosted ASP.NET web-application asking for client-certificate</title>
+		<title>IIS-hosted ASP.NET application asking for client-certificate</title>
 	</head>
 	<body>
-		<h1>IIS-hosted ASP.NET web-application asking for client-certificate</h1>
-		@Html.Partial("~/Views/Shared/Links.cshtml")
-		@Html.Partial("~/Views/Shared/ClientCertificate.cshtml", Model.ClientCertificate, new ViewDataDictionary())
-		@Html.Partial("~/Views/Shared/Scripts.cshtml")
+		<h1>IIS-hosted ASP.NET application asking for client-certificate</h1>
+		<noscript>
+			<p>Scripts are not enabled. To clear the cached client-certificate you have to close your browser.</p>
+		</noscript>
+		@if(Request.IsSecureConnection)
+		{
+			<p>Try with <a href="http://localhost:8066/">http</a> instead.</p>
+		}
+		else
+		{
+			<p>Try with <a href="https://localhost:44366/">https</a> instead.</p>
+		}
+		<ul>
+			<li>
+				<a href="/">Home</a>
+			</li>
+			<li>
+				<a href="/Home/NegotiateClientCertificate/">Negotiate client-certificate (&lt;access sslFlags="SslNegotiateCert" /&gt;)</a>
+			</li>
+			<li>
+				<a href="/Home/SslNegotiateClientCertificate/">Negotiate client-certificate - SSL required (&lt;access sslFlags="Ssl, SslNegotiateCert" /&gt;)</a>
+			</li>
+			<li>
+				<a href="/Home/RequireClientCertificate/">Require client-certificate (&lt;access sslFlags="SslNegotiateCert, SslRequireCert" /&gt;)</a>
+			</li>
+			<li>
+				<a href="/Home/SslRequireClientCertificate/">Require client-certificate - SSL required (&lt;access sslFlags="Ssl, SslNegotiateCert, SslRequireCert" /&gt;)</a>
+			</li>
+			<li>
+				<a href="#clear-cached-client-certificate" onclick="clearCachedClientCertificate();return false;">Clear the cached client-certificate</a>
+			</li>
+		</ul>
+		<h2>Client-certificate</h2>
+		@if(Request.ClientCertificate != null)
+		{
+			<ul>
+				<li>
+					<strong>Issuer: </strong>@Request.ClientCertificate.Issuer
+				</li>
+				<li>
+					<strong>Subject: </strong>@Request.ClientCertificate.Subject
+				</li>
+			</ul>
+		}
+		else
+		{
+			<p>NULL</p>
+		}
+		<script>
+			function clearCachedClientCertificate() {
+				var clearByClosingBrowserMessage =
+					"To clear the cached client-certificate you have to close your browser.";
+				if (window.crypto) {
+					try {
+						window.crypto.logout();
+						alert("The cached client-certificate is removed.");
+					} catch (exception) {
+						alert("window.crypto.logout() does not work. " +
+							clearByClosingBrowserMessage +
+							" Error: " +
+							exception.message);
+					}
+				} else {
+					alert("window.crypto does not exist. " + clearByClosingBrowserMessage);
+				}
+			}
+		</script>
 	</body>
 </html>
