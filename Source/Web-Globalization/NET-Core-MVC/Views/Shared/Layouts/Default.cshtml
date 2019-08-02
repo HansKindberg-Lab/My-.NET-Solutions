@@ -1,0 +1,250 @@
+﻿@model IViewModel
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@Context.GetRouteValue(RouteKeys.Controller) · ASP.NET Core application with request-culture-providers</title>
+		<link href="/Style/bootstrap.css" rel="stylesheet" />
+		<link href="/Style/site.css" rel="stylesheet" />
+	</head>
+	<body>
+		<header>
+			<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+				@if(Model.Layout.MainNavigation != null)
+				{
+					<a class="navbar-brand" href="@Model.Layout.MainNavigation.Url" title="@Model.Layout.MainNavigation.Tooltip">
+						<svg class="d-block mx-auto" fill="none" focusable="false" height="24" role="img" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+							<circle cx="12" cy="12" r="10" />
+							<path d="M14.31 8l5.74 9.94M9.69 8h11.48M7.38 12l5.74-9.94M9.69 16L3.95 6.06M14.31 16H2.83m13.79-4l-5.74 9.94" />
+						</svg>
+					</a>
+				}
+				<button aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navigation" data-toggle="collapse" type="button">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navigation">
+					@if(Model.Layout.MainNavigation != null && Model.Layout.MainNavigation.Children.Any())
+					{
+						<ul class="navbar-nav mr-auto">
+							@foreach(var item in Model.Layout.MainNavigation.Children)
+							{
+								<li class="nav-item@(item.Active ? " active" : string.Empty)">
+									<a class="nav-link" href="@item.Url" title="@item.Tooltip">@item.Text</a>
+								</li>
+							}
+						</ul>
+					}
+					<ul class="navbar-nav">
+						@if(Model.Layout.CultureNavigation != null && Model.Layout.CultureNavigation.Children.Any())
+						{
+							<li class="nav-item dropdown@(Model.Layout.CultureNavigation.Active ? " active" : string.Empty)">
+								<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="culture-selector" title="@Model.Layout.CultureNavigation.Tooltip">@Model.Layout.CultureNavigation.Text</a>
+								<div class="dropdown-menu" aria-labelledby="culture-selector">
+									@foreach(var item in Model.Layout.CultureNavigation.Children)
+									{
+										<a class="dropdown-item@(item.Active ? " active" : string.Empty)" href="@item.Url" title="@item.Tooltip">@item.Text</a>
+									}
+								</div>
+							</li>
+						}
+						@if(Model.Layout.CultureNavigation != null && Model.Layout.UiCultureNavigation.Children.Any())
+						{
+							<li class="nav-item dropdown@(Model.Layout.UiCultureNavigation.Active ? " active" : string.Empty)">
+								<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="ui-culture-selector" title="@Model.Layout.UiCultureNavigation.Tooltip">@Model.Layout.UiCultureNavigation.Text</a>
+								<div class="dropdown-menu" aria-labelledby="ui-culture-selector">
+									@foreach(var item in Model.Layout.UiCultureNavigation.Children)
+									{
+										<a class="dropdown-item@(item.Active ? " active" : string.Empty)" href="@item.Url" title="@item.Tooltip">@item.Text</a>
+									}
+								</div>
+							</li>
+						}
+					</ul>
+				</div>
+			</nav>
+		</header>
+		<main class="container" role="main">
+			<section class="jumbotron">
+				<h1>@Context.GetRouteValue(RouteKeys.Controller)</h1>
+				@{ IgnoreBody(); }
+				<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+				<h2>Date-time example</h2>
+				<ul>
+					<li>DateTime.Now.ToLongDateString(): <strong>@Model.Layout.Now.ToLongDateString()</strong></li>
+					<li>DateTime.Now.ToLongTimeString(): <strong>@Model.Layout.Now.ToLongTimeString()</strong></li>
+				</ul>
+				<h2>Currency example</h2>
+				<ul>
+					<li>CurrentCulture.NumberFormat.CurrencySymbol: <strong>@Model.Layout.Culture.NumberFormat.CurrencySymbol</strong></li>
+					<li>CurrentUICulture.NumberFormat.CurrencySymbol: <strong>@Model.Layout.UiCulture.NumberFormat.CurrencySymbol</strong></li>
+				</ul>
+				<h2>Connected certificate</h2>
+				@if(Model.Layout.Certificate != null)
+				{
+					<ul>
+						<li></li>
+					</ul>
+				}
+				else
+				{
+					<p>
+						<i>No connected certificate.</i>
+					</p>
+				}
+			</section>
+			<section class="container text-break">
+				<div class="row">
+					<div class="bg-light-blue col-md-12 p-3 rounded-lg">
+						<h2>Context</h2>
+						<div class="ml-3">
+							<h3>Cultures</h3>
+							<ul>
+								<li>Culture: <strong>@Model.Layout.Culture</strong> - @Model.Layout.Culture.NativeName</li>
+								<li>UI-culture: <strong>@Model.Layout.UiCulture</strong> - @Model.Layout.UiCulture.NativeName</li>
+							</ul>
+							<h3>Route-values</h3>
+							@if(Model.Layout.RouteDictionary.Any())
+							{
+								<ul>
+									@foreach(var key in Model.Layout.RouteDictionary.Keys)
+									{
+										<li>@key: <strong>@Model.Layout.RouteDictionary[key]</strong></li>
+									}
+								</ul>
+							}
+							else
+							{
+								<p>
+									<i>No route-values.</i>
+								</p>
+							}
+						</div>
+						<h2>Features</h2>
+						<div class="ml-3">
+							<h3>IRequestCultureFeature</h3>
+							<ul>
+								<li>
+									<strong>RequestCulture:</strong>
+									<ul>
+										<li>Culture: <strong>@Model.Layout.RequestCultureFeature.RequestCulture.Culture</strong> - @Model.Layout.RequestCultureFeature.RequestCulture.Culture.NativeName</li>
+										<li>UICulture: <strong>@Model.Layout.RequestCultureFeature.RequestCulture.UICulture</strong> - @Model.Layout.RequestCultureFeature.RequestCulture.UICulture.NativeName</li>
+									</ul>
+								</li>
+								<li>Provider: <strong>@(Model.Layout.RequestCultureFeature.Provider?.GetType()?.ToString() ?? "NULL")</strong></li>
+							</ul>
+						</div>
+						<h2>Settings</h2>
+						<div class="ml-3">
+							<h3>Request-localization-options</h3>
+							<ul>
+								<li>
+									<strong>DefaultRequestCulture:</strong>
+									<ul>
+										<li>Culture: <strong>@Model.Layout.RequestLocalizationOptions.DefaultRequestCulture.Culture</strong></li>
+										<li>UICulture: <strong>@Model.Layout.RequestLocalizationOptions.DefaultRequestCulture.UICulture</strong></li>
+									</ul>
+								</li>
+								<li>FallBackToParentCultures: <strong>@Model.Layout.RequestLocalizationOptions.FallBackToParentCultures</strong></li>
+								<li>FallBackToParentUICultures: <strong>@Model.Layout.RequestLocalizationOptions.FallBackToParentUICultures</strong></li>
+								<li>
+									<strong>RequestCultureProviders:</strong>
+									@if(Model.Layout.RequestLocalizationOptions.RequestCultureProviders.Any())
+									{
+										<ol>
+											@foreach(var provider in Model.Layout.RequestLocalizationOptions.RequestCultureProviders)
+											{
+												<li><strong>@provider, @provider.GetType().Assembly.GetName().Name</strong></li>
+											}
+										</ol>
+									}
+								</li>
+								<li class="button-list-item">
+									<button class="btn btn-primary" data-target="#supported-cultures-modal" data-toggle="modal" type="button">
+										Supported cultures
+									</button>
+									<div aria-hidden="true" aria-labelledby="supported-cultures-modal-label" class="culture-list-modal modal fade" id="supported-cultures-modal" role="dialog" tabindex="-1">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="supported-cultures-modal-label">Supported cultures</h5>
+													<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													@if(Model.Layout.RequestLocalizationOptions.SupportedCultures.Any())
+													{
+														<ol>
+															@foreach(var culture in Model.Layout.RequestLocalizationOptions.SupportedCultures)
+															{
+																<li><a href="?culture=@culture" title="As query-string."><strong>@culture</strong></a> - @culture.NativeName</li>
+															}
+														</ol>
+													}
+													else
+													{
+														<p>
+															<i>No supported cultures.</i>
+														</p>
+													}
+												</div>
+												<div class="modal-footer">
+													<button class="btn btn-primary" data-dismiss="modal" type="button">Close</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</li>
+								<li class="button-list-item">
+									<button class="btn btn-primary" data-target="#supported-ui-cultures-modal" data-toggle="modal" type="button">
+										Supported ui-cultures
+									</button>
+									<div aria-hidden="true" aria-labelledby="supported-ui-cultures-modal-label" class="culture-list-modal modal fade" id="supported-ui-cultures-modal" role="dialog" tabindex="-1">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h5 class="modal-title" id="supported-ui-cultures-modal-label">Supported ui-cultures</h5>
+													<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													@if(Model.Layout.RequestLocalizationOptions.SupportedUICultures.Any())
+													{
+														<ol>
+															@foreach(var culture in Model.Layout.RequestLocalizationOptions.SupportedUICultures)
+															{
+																<li><a href="?ui-culture=@culture" title="As query-string."><strong>@culture</strong></a> - @culture.NativeName</li>
+															}
+														</ol>
+													}
+													else
+													{
+														<p>
+															<i>No supported ui-cultures.</i>
+														</p>
+													}
+												</div>
+												<div class="modal-footer">
+													<button class="btn btn-primary" data-dismiss="modal" type="button">Close</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<footer>
+			<hr />
+			<p class="text-center">Region Örebro län · ASP.NET Core application with request-culture-providers</p>
+		</footer>
+		<script src="/Scripts/jquery.js"></script>
+		<script src="/Scripts/popper.js"></script>
+		<script src="/Scripts/bootstrap.js"></script>
+	</body>
+</html>

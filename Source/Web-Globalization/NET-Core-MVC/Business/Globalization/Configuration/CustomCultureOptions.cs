@@ -1,0 +1,14 @@
+﻿namespace Company.WebApplication.Business.Globalization.Configuration
+{
+	public class CustomCultureOptions
+	{
+		#region Properties
+
+		public virtual string DisplayName { get; set; }
+		public virtual string EnglishName { get; set; }
+		public virtual string NativeName { get; set; }
+		public virtual string ParentName { get; set; }
+
+		#endregion
+	}
+}

@@ -1,0 +1,30 @@
+body {
+	padding-top: 4.5rem;
+}
+h3 {
+	font-size: 1.5rem;
+}
+.jumbotron {
+	padding: 1rem;
+}
+.dropdown-menu {
+	left: auto;
+	max-height: 400px;
+	overflow-y: scroll;
+	right: 0;
+}
+a.dropdown-item:hover {
+	background-color: #cce5ff;
+	color: #212529;
+}
+.bg-light-blue {
+	background-color: #cce5ff;
+}
+li.button-list-item {
+	padding-bottom: 5px;
+	padding-top: 5px;
+}
+.culture-list-modal .modal-body {
+	max-height: 400px;
+	overflow-y: scroll;
+}

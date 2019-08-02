@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29020.237
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".Global", ".Global", "{CFD273AA-75AD-4BFD-8D44-DB93810C9857}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{2A20BE87-0560-4574-8B6F-C041225B2378}"
+	ProjectSection(SolutionItems) = preProject
+		.Global\Build\Build.targets = .Global\Build\Build.targets
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{360E2774-EE7D-4462-BF67-28957A294F7B}"
+	ProjectSection(SolutionItems) = preProject
+		ReadMe.md = ReadMe.md
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NET-Core-MVC", "NET-Core-MVC\NET-Core-MVC.csproj", "{D356EA10-7B88-4AB1-9733-66D51DC97126}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D356EA10-7B88-4AB1-9733-66D51DC97126}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D356EA10-7B88-4AB1-9733-66D51DC97126}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D356EA10-7B88-4AB1-9733-66D51DC97126}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D356EA10-7B88-4AB1-9733-66D51DC97126}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2A20BE87-0560-4574-8B6F-C041225B2378} = {CFD273AA-75AD-4BFD-8D44-DB93810C9857}
+		{360E2774-EE7D-4462-BF67-28957A294F7B} = {CFD273AA-75AD-4BFD-8D44-DB93810C9857}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {37E8CA1D-BE1E-494D-9272-02C223FB1410}
+	EndGlobalSection
+EndGlobal
