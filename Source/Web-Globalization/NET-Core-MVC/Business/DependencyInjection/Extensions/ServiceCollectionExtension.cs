@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using Company.WebApplication.Business.Globalization;
-using Company.WebApplication.Business.Globalization.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Configuration;
@@ -23,10 +21,10 @@ namespace Company.WebApplication.Business.DependencyInjection.Extensions
 			if(configuration == null)
 				throw new ArgumentNullException(nameof(configuration));
 
+			var cultureFactory = services.BuildServiceProvider().GetRequiredService<ICultureFactory>();
+
 			services.Configure<RequestLocalizationOptions>(options =>
 			{
-				var customCultures = configuration.GetSection("CustomCultures").Get<IDictionary<string, CustomCultureOptions>>();
-
 				var requestLocalizationOptions = CreateRequestLocalizationOptions();
 
 				var requestLocalizationSection = configuration.GetSection("RequestLocalization");
@@ -34,8 +32,8 @@ namespace Company.WebApplication.Business.DependencyInjection.Extensions
 				requestLocalizationSection.Bind(requestLocalizationOptions);
 
 				var defaultRequestCultureSection = requestLocalizationSection.GetSection("DefaultRequestCulture");
-				var defaultRequestCulture = GetCulture(defaultRequestCultureSection.GetSection("Culture").Get<string>(), customCultures);
-				var defaultRequestUiCulture = GetCulture(defaultRequestCultureSection.GetSection("UiCulture").Get<string>(), customCultures);
+				var defaultRequestCulture = cultureFactory.Create(defaultRequestCultureSection.GetSection("Culture").Get<string>(), true);
+				var defaultRequestUiCulture = cultureFactory.Create(defaultRequestCultureSection.GetSection("UiCulture").Get<string>(), true);
 
 				options.DefaultRequestCulture = new RequestCulture(defaultRequestCulture, defaultRequestUiCulture);
 				options.FallBackToParentCultures = requestLocalizationOptions.FallBackToParentCultures;
@@ -50,8 +48,8 @@ namespace Company.WebApplication.Business.DependencyInjection.Extensions
 					options.RequestCultureProviders.Add((IRequestCultureProvider) Activator.CreateInstance(type));
 				}
 
-				options.SupportedCultures = requestLocalizationSection.GetSection("SupportedCultures").Get<IEnumerable<string>>().Select(item => GetCulture(item, customCultures)).ToList();
-				options.SupportedUICultures = requestLocalizationSection.GetSection("SupportedUiCultures").Get<IEnumerable<string>>().Select(item => GetCulture(item, customCultures)).ToList();
+				options.SupportedCultures = requestLocalizationSection.GetSection("SupportedCultures").Get<IEnumerable<string>>().Select(item => cultureFactory.Create(item, true)).ToList();
+				options.SupportedUICultures = requestLocalizationSection.GetSection("SupportedUiCultures").Get<IEnumerable<string>>().Select(item => cultureFactory.Create(item, true)).ToList();
 			});
 
 			return services;
@@ -66,19 +64,6 @@ namespace Company.WebApplication.Business.DependencyInjection.Extensions
 			requestLocalizationOptions.SupportedUICultures.Clear();
 
 			return requestLocalizationOptions;
-		}
-
-		private static CultureInfo GetCulture(string name, IDictionary<string, CustomCultureOptions> customCultures)
-		{
-			if(customCultures == null)
-				throw new ArgumentNullException(nameof(customCultures));
-
-			// ReSharper disable ConvertIfStatementToReturnStatement
-			if(customCultures.TryGetValue(name, out var options))
-				return CultureInfo.ReadOnly(new CustomCulture(options.DisplayName, options.EnglishName, name, options.NativeName, options.ParentName));
-			// ReSharper restore ConvertIfStatementToReturnStatement
-
-			return CultureInfo.GetCultureInfo(name);
 		}
 
 		#endregion

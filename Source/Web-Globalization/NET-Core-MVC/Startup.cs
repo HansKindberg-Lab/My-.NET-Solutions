@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Company.WebApplication.Business.DependencyInjection.Extensions;
+using Company.WebApplication.Business.Globalization;
+using Company.WebApplication.Business.Globalization.Configuration;
 using Company.WebApplication.Business.Web.Mvc.Configuration;
 using Company.WebApplication.Business.Web.Mvc.Filters;
 using Company.WebApplication.Business.Web.Routing;
@@ -59,6 +62,9 @@ namespace Company.WebApplication
 		{
 			if(services == null)
 				throw new ArgumentNullException(nameof(services));
+
+			services.AddSingleton<ICultureFactory, CultureFactory>();
+			services.AddSingleton(this.Configuration.GetSection("CustomCultures").Get<IDictionary<string, CustomCultureOptions>>());
 
 			services.ConfigureRequestLocalization(this.Configuration);
 
