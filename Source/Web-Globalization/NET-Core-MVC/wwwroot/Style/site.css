@@ -28,3 +28,13 @@ li.button-list-item {
 	max-height: 400px;
 	overflow-y: scroll;
 }
+@media (max-width: 768px) {
+	.navbar-collapse form button {
+		margin-top: 0.4rem;
+	}
+}
+@media (min-width: 768px) {
+	.navbar-collapse form button {
+		margin-left: 0.4rem;
+	}
+}

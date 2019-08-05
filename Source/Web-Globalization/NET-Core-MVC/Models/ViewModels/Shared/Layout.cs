@@ -22,6 +22,7 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 		private Lazy<ICertificate> _certificate;
 		private const string _certificateController = "Certificate";
 		private Lazy<string> _controllerSegment;
+		private Lazy<string> _cultureCookieValue;
 		private INavigationNode _cultureNavigation;
 		private Lazy<string> _cultureSegment;
 		private const string _homeController = "Home";
@@ -82,6 +83,18 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 		}
 
 		public virtual CultureInfo Culture => CultureInfo.CurrentCulture;
+		public virtual string CultureCookieName => CookieRequestCultureProvider.DefaultCookieName;
+
+		public virtual string CultureCookieValue
+		{
+			get
+			{
+				if(this._cultureCookieValue == null)
+					this._cultureCookieValue = new Lazy<string>(() => this.HttpContext.Request.Cookies.TryGetValue(this.CultureCookieName, out var value) ? value : null);
+
+				return this._cultureCookieValue.Value;
+			}
+		}
 
 		public virtual INavigationNode CultureNavigation
 		{

@@ -14,6 +14,8 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 
 		ICertificate Certificate { get; }
 		CultureInfo Culture { get; }
+		string CultureCookieName { get; }
+		string CultureCookieValue { get; }
 		INavigationNode CultureNavigation { get; }
 		INavigationNode MainNavigation { get; }
 		DateTime Now { get; }

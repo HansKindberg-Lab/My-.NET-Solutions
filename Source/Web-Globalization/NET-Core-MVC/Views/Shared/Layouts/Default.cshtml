@@ -24,10 +24,10 @@
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navigation">
-					@if(Model.Layout.MainNavigation != null && Model.Layout.MainNavigation.Children.Any())
+					@if (Model.Layout.MainNavigation != null && Model.Layout.MainNavigation.Children.Any())
 					{
 						<ul class="navbar-nav mr-auto">
-							@foreach(var item in Model.Layout.MainNavigation.Children)
+							@foreach (var item in Model.Layout.MainNavigation.Children)
 							{
 								<li class="nav-item@(item.Active ? " active" : string.Empty)">
 									<a class="nav-link" href="@item.Url" title="@item.Tooltip">@item.Text</a>
@@ -36,24 +36,24 @@
 						</ul>
 					}
 					<ul class="navbar-nav">
-						@if(Model.Layout.CultureNavigation != null && Model.Layout.CultureNavigation.Children.Any())
+						@if (Model.Layout.CultureNavigation != null && Model.Layout.CultureNavigation.Children.Any())
 						{
 							<li class="nav-item dropdown@(Model.Layout.CultureNavigation.Active ? " active" : string.Empty)">
 								<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="culture-selector" title="@Model.Layout.CultureNavigation.Tooltip">@Model.Layout.CultureNavigation.Text</a>
 								<div class="dropdown-menu" aria-labelledby="culture-selector">
-									@foreach(var item in Model.Layout.CultureNavigation.Children)
+									@foreach (var item in Model.Layout.CultureNavigation.Children)
 									{
 										<a class="dropdown-item@(item.Active ? " active" : string.Empty)" href="@item.Url" title="@item.Tooltip">@item.Text</a>
 									}
 								</div>
 							</li>
 						}
-						@if(Model.Layout.CultureNavigation != null && Model.Layout.UiCultureNavigation.Children.Any())
+						@if (Model.Layout.CultureNavigation != null && Model.Layout.UiCultureNavigation.Children.Any())
 						{
 							<li class="nav-item dropdown@(Model.Layout.UiCultureNavigation.Active ? " active" : string.Empty)">
 								<a aria-expanded="false" aria-haspopup="true" class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" id="ui-culture-selector" title="@Model.Layout.UiCultureNavigation.Tooltip">@Model.Layout.UiCultureNavigation.Text</a>
 								<div class="dropdown-menu" aria-labelledby="ui-culture-selector">
-									@foreach(var item in Model.Layout.UiCultureNavigation.Children)
+									@foreach (var item in Model.Layout.UiCultureNavigation.Children)
 									{
 										<a class="dropdown-item@(item.Active ? " active" : string.Empty)" href="@item.Url" title="@item.Tooltip">@item.Text</a>
 									}
@@ -61,6 +61,19 @@
 							</li>
 						}
 					</ul>
+					<form asp-action="SaveCookie">
+						<input name="Culture" type="hidden" value="@Model.Layout.Culture" />
+						<input name="ReturnUrl" type="hidden" value="@(Context.Request.Path + Context.Request.QueryString)" />
+						<input name="UiCulture" type="hidden" value="@Model.Layout.UiCulture" />
+						<button class="btn btn-primary" title="Save culture-cookie." type="submit">Save</button>
+					</form>
+					@if(Model.Layout.CultureCookieValue != null)
+					{
+						<form asp-action="DeleteCookie">
+							<input name="ReturnUrl" type="hidden" value="@(Context.Request.Path + Context.Request.QueryString)" />
+							<button class="btn btn-warning" title="Delete culture-cookie." type="submit">Delete</button>
+						</form>
+					}
 				</div>
 			</nav>
 		</header>
@@ -104,10 +117,10 @@
 								<li>UI-culture: <strong>@Model.Layout.UiCulture</strong> - @Model.Layout.UiCulture.NativeName</li>
 							</ul>
 							<h3>Route-values</h3>
-							@if(Model.Layout.RouteDictionary.Any())
+							@if (Model.Layout.RouteDictionary.Any())
 							{
 								<ul>
-									@foreach(var key in Model.Layout.RouteDictionary.Keys)
+									@foreach (var key in Model.Layout.RouteDictionary.Keys)
 									{
 										<li>@key: <strong>@Model.Layout.RouteDictionary[key]</strong></li>
 									}
@@ -117,6 +130,19 @@
 							{
 								<p>
 									<i>No route-values.</i>
+								</p>
+							}
+							<h3>Culture-cookie</h3>
+							@if (Model.Layout.CultureCookieValue != null)
+							{
+								<ul>
+									<li>@Model.Layout.CultureCookieName: <strong>@Model.Layout.CultureCookieValue</strong></li>
+								</ul>
+							}
+							else
+							{
+								<p>
+									<i>No culture-cookie.</i>
 								</p>
 							}
 						</div>
