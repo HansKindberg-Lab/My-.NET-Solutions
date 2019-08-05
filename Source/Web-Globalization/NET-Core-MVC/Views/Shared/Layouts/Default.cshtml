@@ -96,7 +96,11 @@
 				@if(Model.Layout.Certificate != null)
 				{
 					<ul>
-						<li></li>
+						<li>Friendly-name: <strong>@Model.Layout.Certificate.FriendlyName</strong></li>
+						<li>Issuer: <strong>@Model.Layout.Certificate.Issuer</strong></li>
+						<li>Serial-number: <strong>@Model.Layout.Certificate.SerialNumber</strong></li>
+						<li>Subject: <strong>@Model.Layout.Certificate.Subject</strong></li>
+						<li>Thumbprint: <strong>@Model.Layout.Certificate.Thumbprint</strong></li>
 					</ul>
 				}
 				else
