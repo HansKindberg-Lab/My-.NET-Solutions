@@ -8,6 +8,7 @@ using Company.WebApplication.Models.Navigation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Localization.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -98,43 +99,7 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 
 		public virtual INavigationNode CultureNavigation
 		{
-			get
-			{
-				if(this._cultureNavigation == null)
-				{
-					var cultureNavigation = new NavigationNode(null)
-					{
-						Active = this.CultureSegment != null,
-						Text = "Culture" + (this.CultureSegment != null ? ": " + this.Culture.NativeName : string.Empty),
-						Tooltip = "Select a culture."
-					};
-
-					if(this.CultureSegment != null)
-					{
-						cultureNavigation.Children.Add(new NavigationNode(cultureNavigation)
-						{
-							Text = "None",
-							Tooltip = "Clear the culture-selection.",
-							Url = this.GetCultureUrl((CultureInfo) null)
-						});
-					}
-
-					foreach(var culture in this.RequestLocalizationOptions.SupportedCultures.OrderBy(culture => culture.NativeName, StringComparer.Ordinal))
-					{
-						cultureNavigation.Children.Add(new NavigationNode(cultureNavigation)
-						{
-							Active = this.CultureSegment != null && culture.Equals(this.Culture),
-							Text = culture.NativeName,
-							Tooltip = "Select culture " + culture.Name + ".",
-							Url = this.GetCultureUrl(culture)
-						});
-					}
-
-					this._cultureNavigation = cultureNavigation;
-				}
-
-				return this._cultureNavigation;
-			}
+			get { return this._cultureNavigation ?? (this._cultureNavigation = this.GetCultureNavigation(() => this.Culture, () => this.CultureSegment, "Culture", "ui-culture", () => this.RequestLocalizationOptions.SupportedCultures, this.GetCultureUrl)); }
 		}
 
 		protected internal virtual string CultureSegment
@@ -297,43 +262,7 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 
 		public virtual INavigationNode UiCultureNavigation
 		{
-			get
-			{
-				if(this._uiCultureNavigation == null)
-				{
-					var uiCultureNavigation = new NavigationNode(null)
-					{
-						Active = this.UiCultureSegment != null,
-						Text = "UI-culture" + (this.UiCultureSegment != null ? ": " + this.UiCulture.NativeName : string.Empty),
-						Tooltip = "Select a ui-culture."
-					};
-
-					if(this.UiCultureSegment != null)
-					{
-						uiCultureNavigation.Children.Add(new NavigationNode(uiCultureNavigation)
-						{
-							Text = "None",
-							Tooltip = "Clear the ui-culture-selection.",
-							Url = this.GetUiCultureUrl(null)
-						});
-					}
-
-					foreach(var uiCulture in this.RequestLocalizationOptions.SupportedUICultures.OrderBy(uiCulture => uiCulture.NativeName, StringComparer.Ordinal))
-					{
-						uiCultureNavigation.Children.Add(new NavigationNode(uiCultureNavigation)
-						{
-							Active = this.UiCultureSegment != null && uiCulture.Equals(this.UiCulture),
-							Text = uiCulture.NativeName,
-							Tooltip = "Select ui-culture " + uiCulture.Name + ".",
-							Url = this.GetUiCultureUrl(uiCulture)
-						});
-					}
-
-					this._uiCultureNavigation = uiCultureNavigation;
-				}
-
-				return this._uiCultureNavigation;
-			}
+			get { return this._uiCultureNavigation ?? (this._uiCultureNavigation = this.GetCultureNavigation(() => this.UiCulture, () => this.UiCultureSegment, "UI-culture", "culture", () => this.RequestLocalizationOptions.SupportedUICultures, this.GetUiCultureUrl)); }
 		}
 
 		protected internal virtual string UiCultureSegment
@@ -363,6 +292,70 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 		#endregion
 
 		#region Methods
+
+		protected internal virtual INavigationNode GetCultureNavigation(Func<CultureInfo> cultureFunction, Func<string> cultureSegmentFunction, string label, string otherRouteKey, Func<IEnumerable<CultureInfo>> supportedCulturesFunction, Func<CultureInfo, Uri> urlFunction)
+		{
+			if(cultureFunction == null)
+				throw new ArgumentNullException(nameof(cultureFunction));
+
+			if(cultureSegmentFunction == null)
+				throw new ArgumentNullException(nameof(cultureSegmentFunction));
+
+			if(supportedCulturesFunction == null)
+				throw new ArgumentNullException(nameof(supportedCulturesFunction));
+
+			if(urlFunction == null)
+				throw new ArgumentNullException(nameof(urlFunction));
+
+			var culture = cultureFunction();
+			var cultureSegment = cultureSegmentFunction();
+
+			var labelAsLowerCase = label?.ToLowerInvariant();
+
+			var hint = this.GetRequestCultureProviderHint(this.RequestCultureFeature.Provider);
+			string description = null;
+			var descriptionSuffix = this.GetRequestCultureProviderDescriptionSuffix(this.RequestCultureFeature.Provider);
+
+			if(descriptionSuffix != null)
+			{
+				description = $"The current {labelAsLowerCase} is determined by ";
+
+				if(this.RequestCultureFeature.Provider is RouteDataRequestCultureProvider && cultureSegment == null)
+					description += "the " + otherRouteKey + "-route-key of ";
+
+				description += descriptionSuffix;
+			}
+
+			var cultureNavigation = new NavigationNode(null)
+			{
+				Active = culture != null,
+				Text = label + (hint != null ? $" from {hint}" : null) + ": " + culture?.NativeName,
+				Tooltip = "Select a " + labelAsLowerCase + "." + (description != null ? " " + description : null)
+			};
+
+			if(cultureSegment != null)
+			{
+				cultureNavigation.Children.Add(new NavigationNode(cultureNavigation)
+				{
+					Text = " - Clear - ",
+					Tooltip = "Clear the url-selected culture.",
+					Url = urlFunction(null)
+				});
+			}
+
+			foreach(var supportedCulture in supportedCulturesFunction().OrderBy(item => item.NativeName, StringComparer.Ordinal))
+			{
+				cultureNavigation.Children.Add(new NavigationNode(cultureNavigation)
+				{
+					Active = cultureSegment != null && supportedCulture.Equals(culture),
+					Text = supportedCulture.NativeName,
+					Tooltip = "Select culture " + supportedCulture.Name + ".",
+					Url = urlFunction(supportedCulture)
+				});
+			}
+
+			return cultureNavigation;
+		}
 
 		protected internal virtual Uri GetCultureUrl(CultureInfo culture)
 		{
@@ -426,6 +419,44 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 				segments.Add(controller);
 
 			return new Uri(_pathSeparator + (segments.Any() ? string.Join(_pathSeparator, segments) + _pathSeparator : string.Empty), UriKind.Relative);
+		}
+
+		protected internal virtual string GetRequestCultureProviderDescriptionSuffix(IRequestCultureProvider requestCultureProvider)
+		{
+			switch(requestCultureProvider)
+			{
+				case null:
+					return "the default settings.";
+				case AcceptLanguageHeaderRequestCultureProvider _:
+					return "the request-header (browser-settings).";
+				case CookieRequestCultureProvider _:
+					return "a cookie.";
+				case QueryStringRequestCultureProvider _:
+					return "the query-string.";
+				case RouteDataRequestCultureProvider _:
+					return "the url.";
+				default:
+					return null;
+			}
+		}
+
+		protected internal virtual string GetRequestCultureProviderHint(IRequestCultureProvider requestCultureProvider)
+		{
+			switch(requestCultureProvider)
+			{
+				case null:
+					return "default-settings";
+				case AcceptLanguageHeaderRequestCultureProvider _:
+					return "header";
+				case CookieRequestCultureProvider _:
+					return "cookie";
+				case QueryStringRequestCultureProvider _:
+					return "query-string";
+				case RouteDataRequestCultureProvider _:
+					return "url";
+				default:
+					return null;
+			}
 		}
 
 		protected internal virtual Uri GetUiCultureUrl(CultureInfo uiCulture)
