@@ -310,27 +310,11 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 			var culture = cultureFunction();
 			var cultureSegment = cultureSegmentFunction();
 
-			var labelAsLowerCase = label?.ToLowerInvariant();
-
-			var hint = this.GetRequestCultureProviderHint(this.RequestCultureFeature.Provider);
-			string description = null;
-			var descriptionSuffix = this.GetRequestCultureProviderDescriptionSuffix(this.RequestCultureFeature.Provider);
-
-			if(descriptionSuffix != null)
-			{
-				description = $"The current {labelAsLowerCase} is determined by ";
-
-				if(this.RequestCultureFeature.Provider is RouteDataRequestCultureProvider && cultureSegment == null)
-					description += "the " + otherRouteKey + "-route-key of ";
-
-				description += descriptionSuffix;
-			}
-
 			var cultureNavigation = new NavigationNode(null)
 			{
 				Active = culture != null,
-				Text = label + (hint != null ? $" from {hint}" : null) + ": " + culture?.NativeName,
-				Tooltip = "Select a " + labelAsLowerCase + "." + (description != null ? " " + description : null)
+				Text = this.GetCultureNavigationText(culture, label),
+				Tooltip = this.GetCultureNavigationTooltip(cultureSegment, label, otherRouteKey)
 			};
 
 			if(cultureSegment != null)
@@ -355,6 +339,47 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 			}
 
 			return cultureNavigation;
+		}
+
+		protected internal virtual string GetCultureNavigationText(CultureInfo culture, string label)
+		{
+			var hint = this.GetRequestCultureProviderHint(label, this.RequestCultureFeature.Provider);
+			return label + (hint != null ? $" from {hint}" : null) + ": " + culture?.NativeName;
+		}
+
+		protected internal virtual string GetCultureNavigationTooltip(string cultureSegment, string label, string otherRouteKey)
+		{
+			string information = null;
+			string informationArgument = null;
+			const string informationFormat = "The current {0} is determined by {1}.";
+			var labelAsLowerCase = label?.ToLowerInvariant();
+			const string tooltipFormat = "Select a {0}.{1}";
+
+			switch(this.RequestCultureFeature.Provider)
+			{
+				case null:
+					informationArgument = "the default settings";
+					break;
+				case AcceptLanguageHeaderRequestCultureProvider _:
+					informationArgument = "the request-header (browser-settings)";
+					break;
+				case CookieRequestCultureProvider _:
+					informationArgument = "a cookie";
+					break;
+				case QueryStringRequestCultureProvider _:
+					informationArgument = this.HttpContext.Request.Query.Keys.Contains(label, StringComparer.OrdinalIgnoreCase) ? "the query-string" : "the query-string or the default settings";
+					break;
+				case RouteDataRequestCultureProvider _:
+					informationArgument = (cultureSegment == null ? "the " + otherRouteKey + "-route-key of " : null) + "the url";
+					break;
+				default:
+					break;
+			}
+
+			if(informationArgument != null)
+				information = " " + string.Format(this.Culture, informationFormat, labelAsLowerCase, informationArgument);
+
+			return string.Format(this.Culture, tooltipFormat, labelAsLowerCase, information);
 		}
 
 		protected internal virtual Uri GetCultureUrl(CultureInfo culture)
@@ -421,26 +446,7 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 			return new Uri(_pathSeparator + (segments.Any() ? string.Join(_pathSeparator, segments) + _pathSeparator : string.Empty), UriKind.Relative);
 		}
 
-		protected internal virtual string GetRequestCultureProviderDescriptionSuffix(IRequestCultureProvider requestCultureProvider)
-		{
-			switch(requestCultureProvider)
-			{
-				case null:
-					return "the default settings.";
-				case AcceptLanguageHeaderRequestCultureProvider _:
-					return "the request-header (browser-settings).";
-				case CookieRequestCultureProvider _:
-					return "a cookie.";
-				case QueryStringRequestCultureProvider _:
-					return "the query-string.";
-				case RouteDataRequestCultureProvider _:
-					return "the url.";
-				default:
-					return null;
-			}
-		}
-
-		protected internal virtual string GetRequestCultureProviderHint(IRequestCultureProvider requestCultureProvider)
+		protected internal virtual string GetRequestCultureProviderHint(string label, IRequestCultureProvider requestCultureProvider)
 		{
 			switch(requestCultureProvider)
 			{
@@ -451,7 +457,7 @@ namespace Company.WebApplication.Models.ViewModels.Shared
 				case CookieRequestCultureProvider _:
 					return "cookie";
 				case QueryStringRequestCultureProvider _:
-					return "query-string";
+					return this.HttpContext.Request.Query.Keys.Contains(label, StringComparer.OrdinalIgnoreCase) ? "query-string" : "query-string/default-settings";
 				case RouteDataRequestCultureProvider _:
 					return "url";
 				default:
