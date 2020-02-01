@@ -11,12 +11,13 @@ namespace Company.WebApplication
 		{
 			applicationBuilder.UseDeveloperExceptionPage();
 			applicationBuilder.UseStaticFiles();
-			applicationBuilder.UseMvcWithDefaultRoute();
+			applicationBuilder.UseRouting();
+			applicationBuilder.UseEndpoints(builder => { builder.MapDefaultControllerRoute(); });
 		}
 
 		public virtual void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc();
+			services.AddControllersWithViews();
 		}
 
 		#endregion

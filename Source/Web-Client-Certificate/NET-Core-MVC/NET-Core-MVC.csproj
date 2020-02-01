@@ -2,10 +2,7 @@
 	<PropertyGroup>
 		<AssemblyName>Company.WebApplication</AssemblyName>
 		<RootNamespace>$(AssemblyName)</RootNamespace>
-		<TargetFramework>netcoreapp2.2</TargetFramework>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
 	</PropertyGroup>
-	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.App" />
-	</ItemGroup>
 	<Import Project="Build\Build.targets" />
 </Project>
